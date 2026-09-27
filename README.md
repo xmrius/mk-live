@@ -50,6 +50,19 @@ docs/           installation guide, telemetry format
 tools/          latency_meter.html – glass-to-glass latency measurement page
 ```
 
+## Credits
+
+- **[OpenKart SDK](https://github.com/OpenKart-SDK/openkart)** by Sam Edwards (CFSworks) –
+  the access point, pairing and kart connection this project builds on, plus the
+  [patched hostapd](https://github.com/OpenKart-SDK/hostapd).
+- **[SwitchBrew](https://switchbrew.org/wiki/Mario_Kart_Live:_Home_Circuit)** – the
+  community documentation of the kart protocol (LP2P, RCD, video, control and telemetry
+  channels).
+- **[Malu05](https://www.youtube.com/@malu05a)** – the video
+  [ESP32 Control of a Mario Kart from Home Circuit](https://www.youtube.com/watch?v=8QY38eNyXG4)
+  inspired the cockpit instruments (G-force, compass, telemetry readouts).
+- [hostapd](https://w1.fi/hostapd/) by Jouni Malinen and contributors.
+
 ## Disclaimer
 
 Not affiliated with or endorsed by Nintendo. Mario Kart and Nintendo Switch are
