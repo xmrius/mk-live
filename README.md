@@ -5,6 +5,10 @@ or Linux PC with a USB Wi-Fi stick becomes the base station, and the cockpit run
 browser: ~60 ms camera latency, gamepad/keyboard/touch controls, battery and signal
 status, one-click pairing and live IMU instruments (compass, G-meter).
 
+[![Watch the video: Mario Kart Live, No Switch Needed – Low-Latency Cockpit on the Steam Deck](https://img.youtube.com/vi/9bMBaBj0QV8/maxresdefault.jpg)](https://youtu.be/9bMBaBj0QV8)
+
+▶ **Watch the demo on YouTube:** https://youtu.be/9bMBaBj0QV8
+
 ## Quick start
 
 Hardware: a kart, a USB Wi-Fi stick with AP mode (tested: [Atheros AR9271](https://link.amazon/B01PDLG23)\*) and one of
