@@ -9,13 +9,16 @@ browser. No Switch and no game are needed.
 
 - **Kart:** Mario Kart Live: Home Circuit (Mario or Luigi)
 - **USB Wi-Fi stick with AP mode.** Tested with an **Atheros AR9271** stick
-  (ath9k_htc), e.g. TP-Link TL-WN722N **v1** or ALFA AWUS036NHA. The built-in Wi-Fi
-  stays free for internet and your home network.
+  (ath9k_htc), e.g. [this AR9271 stick with detachable antenna](https://link.amazon/B01PDLG23)\*, TP-Link
+  TL-WN722N **v1** or ALFA AWUS036NHA. The built-in Wi-Fi stays free for internet and
+  your home network.
 - **One of these:**
   - Raspberry Pi 4 (4 GB) or Pi 5 with Raspberry Pi OS (64-bit), network via cable or Wi-Fi
   - Steam Deck with SteamOS 3.5 or newer, plus a USB-C adapter/hub for the stick
   - any other computer running Debian 13 or Ubuntu 24.04+
 - Internet access once, during installation
+
+\* Affiliate link: as an Amazon Associate I earn from qualifying purchases. The price stays the same for you, and it helps keep the project going.
 
 ## Raspberry Pi (and Debian/Ubuntu)
 

@@ -7,8 +7,10 @@ status, one-click pairing and live IMU instruments (compass, G-meter).
 
 ## Quick start
 
-Hardware: a kart, a USB Wi-Fi stick with AP mode (tested: Atheros AR9271) and one of
+Hardware: a kart, a USB Wi-Fi stick with AP mode (tested: [Atheros AR9271](https://link.amazon/B01PDLG23)\*) and one of
 Raspberry Pi 4/5 (Raspberry Pi OS 64-bit), Steam Deck (SteamOS 3.5+) or Debian 13 / Ubuntu 24.04+.
+
+\* Affiliate link: as an Amazon Associate I earn from qualifying purchases. The price stays the same for you, and it helps keep the project going.
 
 ```bash
 git clone https://github.com/xmrius/mk-live.git && cd mk-live
