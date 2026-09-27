@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Kart Latenz-Messung</title>
+<!--
+  Glass-to-glass latency meter for the kart video.
+  Point the kart camera at the big clock. Every 2 s the page freezes the real
+  clock value and the current video frame at the same instant; the difference
+  between the frozen real time and the clock visible inside the frozen frame
+  is the end-to-end latency (camera, encoder, Wi-Fi, OpenKart, worker, browser).
+-->
+<style>
+  :root { --bg: #000; --fg: #fff; --muted: #9aa; --accent: #ffd400; --line: #333; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); font: 14px system-ui, sans-serif; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 12px; }
+  #clock { font: 700 min(15vw, 190px)/1 ui-monospace, Consolas, monospace; letter-spacing: -0.02em;
+           text-align: center; padding: 24px 0; border: 4px solid var(--fg); }
+  #bar { height: 40px; margin-top: 8px; background: linear-gradient(90deg, var(--accent) 0 0) no-repeat;
+         border: 2px solid var(--fg); }
+  .video img, .video canvas { width: 100%; display: block; background: #111; aspect-ratio: 16 / 9; object-fit: contain; }
+  .controls { margin: 8px 0; color: var(--muted); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button, select { background: #222; color: var(--fg); border: 1px solid #555; border-radius: 4px; padding: 4px 10px; }
+  #shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 0 12px 12px; }
+  .shot { border: 1px solid var(--line); }
+  .shot canvas { width: 100%; display: block; }
+  .shot .t { font: 700 22px ui-monospace, Consolas, monospace; color: var(--accent); padding: 4px 6px; }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } #shots { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <div id="clock">00.00</div>
+    <div id="bar"></div>
+    <div class="controls">Kart-Kamera auf die Uhr richten. Uhr = Sekunden.Hundertstel (lokale Zeit).</div>
+  </div>
+  <div class="video">
+    <div id="videoBox"><img id="video" alt="Kart-Video"></div>
+    <div class="controls">
+      <label>Quelle
+        <select id="src">
+          <option value="webcodecs">WebCodecs (:9001/video.ws)</option>
+          <option value="http://localhost:9000/worker/video.mjpg">MJPEG Web-UI-Proxy (:9000)</option>
+          <option value="http://localhost:9001/video.mjpg">MJPEG Worker direkt (:9001)</option>
+        </select>
+      </label>
+      <button id="pause">Snapshots pausieren</button>
+      <span id="info"></span>
+    </div>
+  </div>
+</main>
+<div id="shots"></div>
+<script>
+const clock = document.getElementById('clock');
+const bar = document.getElementById('bar');
+const videoBox = document.getElementById('videoBox');
+let video = document.getElementById('video');
+let player = null;
+const shots = document.getElementById('shots');
+const info = document.getElementById('info');
+const src = document.getElementById('src');
+let paused = false;
+
+function now() { return performance.timeOrigin + performance.now(); }
+function fmt(ms) {
+  const s = (ms / 1000) % 100;
+  return s.toFixed(2).padStart(5, '0');
+}
+function tick() {
+  const t = now();
+  clock.textContent = fmt(t);
+  // Moving bar: one sweep per second, readable even if digits blur.
+  bar.style.backgroundSize = ((t % 1000) / 10) + '% 100%';
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+function setSrc() {
+  if (player) { player.stop(); player = null; }
+  videoBox.innerHTML = '';
+  if (src.value === 'webcodecs') {
+    player = window.KartPlayer.start(videoBox, { wsUrl: 'ws://localhost:9001/video.ws' });
+    video = player.canvas;
+  } else {
+    video = document.createElement('img');
+    video.alt = 'Kart-Video';
+    video.src = src.value + '?ts=' + Date.now();
+    videoBox.appendChild(video);
+  }
+}
+src.addEventListener('change', setSrc);
+const playerScript = document.createElement('script');
+playerScript.src = 'http://localhost:9001/player.js';
+playerScript.onload = setSrc;
+playerScript.onerror = () => { src.value = src.options[1].value; setSrc(); };
+document.head.appendChild(playerScript);
+
+document.getElementById('pause').addEventListener('click', e => {
+  paused = !paused;
+  e.target.textContent = paused ? 'Snapshots fortsetzen' : 'Snapshots pausieren';
+});
+
+function snapshot() {
+  const w = video.naturalWidth || video.width, h = video.naturalHeight || video.height;
+  if (paused || !w) return;
+  const t = now();
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  c.getContext('2d').drawImage(video, 0, 0);
+  const box = document.createElement('div');
+  box.className = 'shot';
+  const label = document.createElement('div');
+  label.className = 't';
+  label.textContent = 'echt ' + fmt(t);
+  box.append(label, c);
+  shots.prepend(box);
+  while (shots.children.length > 8) shots.lastChild.remove();
+  info.textContent = 'letzter Snapshot ' + fmt(t);
+}
+setInterval(snapshot, 2000);
+</script>
+</body>
+</html>

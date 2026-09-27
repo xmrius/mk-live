@@ -1,0 +1,14 @@
+# mk-live runtime image (used by install/steamdeck.sh; works on any Linux with podman).
+# Run with host networking and privileges: OpenKart drives the Wi-Fi adapter.
+FROM docker.io/library/debian:trixie-slim
+
+# Slow layer: packages, hostapd build, OpenKart. Cached until install/ or patches/ change.
+COPY install/ /src/mk-live/install/
+COPY patches/ /src/mk-live/patches/
+RUN /src/mk-live/install/install.sh --container-base
+
+# Fast layer: the cockpit itself, rebuilt in seconds after an update.
+COPY src/ /src/mk-live/src/
+RUN /src/mk-live/install/install.sh --container-app && rm -rf /src/mk-live
+
+ENTRYPOINT ["/opt/mk-live/bin/run-all"]

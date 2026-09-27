@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- MK Live Cockpit launcher icon: steering wheel in the cockpit's cyan on a dark tile -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d2029"/>
+      <stop offset="1" stop-color="#03080c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0.55" stop-color="#3fe6ff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#3fe6ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="none" stroke="#3fe6ff" stroke-opacity="0.35" stroke-width="4"/>
+  <circle cx="128" cy="132" r="96" fill="url(#glow)"/>
+  <g fill="none" stroke="#3fe6ff" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="128" cy="132" r="72" stroke-width="16"/>
+    <path d="M58 122 C92 108 164 108 198 122" stroke-width="14"/>
+    <path d="M128 150 L128 202" stroke-width="14"/>
+  </g>
+  <circle cx="128" cy="138" r="20" fill="#3fe6ff"/>
+  <circle cx="128" cy="138" r="8" fill="#03080c"/>
+  <!-- red top-centre marker, like a racing wheel -->
+  <rect x="120" y="52" width="16" height="22" rx="4" fill="#ff3b4d"/>
+</svg>

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MK Live · Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/hud.css?v=9">
+</head>
+<body>
+<main id="stage">
+  <div id="video" class="video" aria-label="Kart camera" data-i18n-aria="a.video"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="frame-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">MK</span><span class="brand-sub">LIVE · COCKPIT</span></div>
+    <ul class="chips" id="chips">
+      <li class="chip" data-chip="ap"><b></b><span>AP</span><em id="apState">–</em></li>
+      <li class="chip" data-chip="link"><b></b><span>LINK</span><em id="kartName">–</em></li>
+      <li class="chip" data-chip="drive"><b></b><span>DRIVE</span></li>
+      <li class="chip" data-chip="video"><b></b><span>VIDEO</span><em id="videoFps">–</em></li>
+      <li class="chip" data-chip="cable"><b></b><span data-i18n="chip.cable">CABLE</span></li>
+      <li class="chip meter" data-chip="battery"><span data-i18n="chip.battery">BATTERY</span><span class="bat" id="bat"><i></i><i></i><i></i><i></i></span></li>
+      <li class="chip meter" data-chip="rssi"><span>RSSI</span><span class="bars" id="rssiBars"><i></i><i></i><i></i><i></i></span><em id="rssiVal">–</em></li>
+    </ul>
+    <div class="actions">
+      <button class="btn" id="pairBtn" type="button" data-i18n="btn.pair">Pair kart</button>
+      <button class="btn icon" id="settingsBtn" type="button" aria-label="Settings" data-i18n-aria="a.settings" aria-expanded="false">⚙</button>
+    </div>
+  </header>
+
+  <section class="notice" id="notice" hidden>
+    <div class="notice-card">
+      <div class="notice-kicker" id="noticeKicker">STATUS</div>
+      <h2 id="noticeTitle" data-i18n="notice.waiting">Waiting for kart</h2>
+      <p id="noticeText"></p>
+      <div class="notice-actions">
+        <button class="btn primary" id="noticePrimary" type="button" hidden></button>
+        <button class="btn" id="noticeSecondary" type="button" hidden></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="instruments" id="instruments" hidden>
+    <button class="compass" id="compass" type="button" title="Reset heading to 0°" data-i18n-title="compass.title">
+      <canvas id="compassCanvas" aria-hidden="true"></canvas>
+      <output id="hdgVal">000°</output>
+    </button>
+    <div class="inst gmeter">
+      <label data-i18n="inst.g">G-FORCE</label>
+      <canvas id="gCanvas" aria-label="G-force" data-i18n-aria="inst.g.aria"></canvas>
+      <dl class="inst-vals">
+        <dt data-i18n="inst.lat">LAT</dt><dd id="gLatVal">0.00</dd>
+        <dt data-i18n="inst.long">LONG</dt><dd id="gLongVal">0.00</dd>
+        <dt data-i18n="inst.peak">PEAK</dt><dd id="gPeakVal">0.00</dd>
+      </dl>
+    </div>
+    <div class="inst attitude">
+      <label data-i18n="inst.att">ATTITUDE</label>
+      <canvas id="attCanvas" aria-label="Tilt" data-i18n-aria="inst.att.aria"></canvas>
+      <dl class="inst-vals">
+        <dt data-i18n="inst.pitch">PITCH</dt><dd id="pitchVal">–</dd>
+        <dt data-i18n="inst.roll">ROLL</dt><dd id="rollVal">–</dd>
+        <dt data-i18n="inst.yaw">YAW RATE</dt><dd id="yawVal">0°/s</dd>
+      </dl>
+      <button class="btn small" id="imuCalHint" type="button" hidden data-i18n="btn.imucal">Calibrate IMU</button>
+    </div>
+  </section>
+
+  <footer class="dash">
+    <div class="gauge-row">
+      <div class="axis" aria-label="Steering" data-i18n-aria="dash.steer.aria">
+        <label data-i18n="dash.steer">STEER</label>
+        <div class="axis-track steer"><div class="axis-fill" id="steerFill"></div><div class="axis-zero"></div></div>
+        <output id="steerVal">0</output>
+      </div>
+      <div class="axis" aria-label="Throttle" data-i18n-aria="dash.throttle.aria">
+        <label data-i18n="dash.throttle">THROTTLE</label>
+        <div class="axis-track throttle"><div class="axis-fill" id="throttleFill"></div><div class="axis-zero"></div></div>
+        <output id="throttleVal">0</output>
+      </div>
+      <div class="brake-lamp" id="brakeLamp" data-i18n="dash.brake">BRAKE</div>
+      <div class="source"><label data-i18n="dash.input">INPUT</label><output id="inputSource">Keyboard</output></div>
+    </div>
+    <div class="keys" data-i18n-html="dash.keys">
+      <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> drive</span>
+      <span><kbd>Shift</kbd> boost</span>
+      <span><kbd>Space</kbd> brake light</span>
+      <span><kbd>F</kbd> full screen</span>
+      <span class="pad-hint">Gamepad: <kbd>L stick</kbd> steer <kbd>R2</kbd>/<kbd>L2</kbd> throttle/reverse <kbd>A</kbd> boost <kbd>R1</kbd> brake light</span>
+    </div>
+  </footer>
+
+  <div class="stick" id="stickSteer" hidden aria-hidden="true"><i></i></div>
+  <div class="stick" id="stickGas" hidden aria-hidden="true"><i></i></div>
+
+  <aside class="drawer" id="drawer" hidden>
+    <h3 data-i18n="drawer.video">Video</h3>
+    <div class="seg" role="group" aria-label="Video mode" data-i18n-aria="drawer.videoMode">
+      <button type="button" data-mode="webcodecs">WebCodecs</button>
+      <button type="button" data-mode="mjpeg">MJPEG</button>
+    </div>
+    <dl class="stats">
+      <dt data-i18n="st.decoder">Decoder</dt><dd id="stDecoder">–</dd>
+      <dt data-i18n="st.fps">Frames/s</dt><dd id="stFps">–</dd>
+      <dt data-i18n="st.latency">Worker latency</dt><dd id="stLatency">–</dd>
+      <dt data-i18n="st.skipped">Skipped</dt><dd id="stSkipped" data-i18n-title="st.skipped.title">–</dd>
+      <dt data-i18n="st.recvGap">Max receive gap</dt><dd id="stRecvGap">–</dd>
+      <dt data-i18n="st.loss">Wi-Fi loss</dt><dd id="stLoss">–</dd>
+      <dt data-i18n="st.kart">Kart</dt><dd id="stKart">–</dd>
+    </dl>
+    <h3 data-i18n="drawer.display">Display</h3>
+    <label class="toggle"><input type="checkbox" id="instToggle" checked> <span data-i18n="drawer.instruments">Instruments (compass, G-force, attitude)</span></label>
+    <h3 data-i18n="drawer.language">Language</h3>
+    <div class="seg" role="group" aria-label="Language" data-i18n-aria="drawer.language">
+      <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="de">Deutsch</button>
+    </div>
+    <h3 data-i18n="drawer.tools">Tools</h3>
+    <div class="tools">
+      <button class="btn" type="button" id="resyncBtn" data-i18n="btn.resync">Resync video</button>
+      <button class="btn" type="button" id="apToggleBtn" data-i18n="btn.apRestart">Restart access point</button>
+      <button class="btn" type="button" id="calibBtn" data-i18n="btn.imucal">Calibrate IMU</button>
+      <button class="btn" type="button" id="quitBtn" title="Controller: hold Select + Start for 1 s" data-i18n="btn.quit" data-i18n-title="btn.quit.title">Quit cockpit</button>
+    </div>
+  </aside>
+
+  <section class="pairing" id="pairing" hidden aria-modal="true" role="dialog" aria-labelledby="pairTitle">
+    <div class="pairing-grid">
+      <div class="pairing-steps">
+        <div class="notice-kicker" data-i18n="pair.kicker">PAIR KART</div>
+        <h2 id="pairTitle" data-i18n="pair.title">Connect a new kart</h2>
+        <ol class="steps" id="pairSteps">
+          <li data-step="1"><b>1</b><div><strong data-i18n="pair.s1">Prepare the kart</strong><span data-i18n="pair.s1.text">Unplug the USB cable and switch the kart on. A kart that is already connected gets disconnected.</span></div></li>
+          <li data-step="2"><b>2</b><div><strong data-i18n="pair.s2">Show the QR code</strong><span data-i18n="pair.s2.text">After about 30 seconds the kart looks for a code. Hold its camera 10–20 cm in front of the code.</span></div></li>
+          <li data-step="3"><b>3</b><div><strong data-i18n="pair.s3">Connect</strong><span data-i18n="pair.s3.text">As soon as the kart is paired, the cockpit switches to driving by itself.</span></div></li>
+        </ol>
+        <p class="pair-status" id="pairStatus" data-i18n="pair.ready">Ready.</p>
+        <div class="notice-actions">
+          <button class="btn primary" id="pairStart" type="button" data-i18n="pair.show">Show QR code</button>
+          <button class="btn" id="pairCancel" type="button" data-i18n="btn.cancel">Cancel</button>
+        </div>
+      </div>
+      <div class="pairing-qr" id="pairQrBox">
+        <div class="qr-placeholder" id="qrPlaceholder">QR</div>
+        <img id="pairQr" alt="Pairing QR code" data-i18n-alt="pair.qrAlt" hidden>
+        <div class="qr-meta" id="qrMeta"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pairing calib" id="calib" hidden aria-modal="true" role="dialog" aria-labelledby="calibTitle">
+    <div class="calib-box">
+      <div class="notice-kicker">IMU</div>
+      <h2 id="calibTitle" data-i18n="calib.title">Calibrate motion sensor</h2>
+      <p class="calib-intro" data-i18n-html="calib.intro">Once per kart, takes about two minutes. Left/right always <b>from the driver’s view</b>. Hold the kart still in each pose, then press <b>Capture</b>.</p>
+      <div class="calib-rates" id="calibRates" data-i18n="calib.ratesIdle">Telemetry: –</div>
+      <ol class="calib-steps" id="calibSteps"></ol>
+      <p class="pair-status" id="calibStatus"></p>
+      <div class="notice-actions">
+        <button class="btn primary" id="calibSave" type="button" disabled data-i18n="btn.save">Save</button>
+        <button class="btn" id="calibClose" type="button" data-i18n="btn.close">Close</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</main>
+<script src="/static/i18n.js?v=1"></script>
+<script src="/static/hud.js?v=11"></script>
+</body>
+</html>

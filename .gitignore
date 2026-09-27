@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local secrets and machine state
+.env
+.ssh/
+*.key
+openkart.conf
+
+# Captures, dumps and recordings stay local
+*.pcap
+*.pcapng
+*.h264
+*.bin
+*.mjpg
+*.mp4
+
+# Game data must never be committed
+*.nsp
+*.xci
+*.nca
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,5 @@
+# Only needed to run from source; the installers use the distribution packages.
+aiohttp>=3.9
+av>=13
+qrcode[pil]>=7
+cryptography>=41

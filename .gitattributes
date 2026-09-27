@@ -1,0 +1,4 @@
+# Scripts run on Linux; CRLF breaks bash and systemd.
+*.sh text eol=lf
+*.conf text eol=lf
+*.py text eol=lf
